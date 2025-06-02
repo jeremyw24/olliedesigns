@@ -47,12 +47,13 @@ const { title, fields } = Astro.props;
 	class="items-center gap-x-[6.25rem] pb-40 auto-cols-fr justify-center flex"
 >
 	<div class="col-span-1 row-span-1 w-full max-w-3xl">
-		<h2 class="text-[2.13rem] leading-9 font-semibold mb-1">
-			{title}
-		</h2>
-		<div class="mt-8">
+<h2 class="text-[2.13rem] leading-9 font-semibold mb-1">
+{title}
+</h2>
+<p class="text-lg mt-4">Call us: <a href="tel:0425719363" class="text-black hover:underline">0425 719 363</a></p>
+<div class="mt-8">
 			<div class="mt-0 mx-0 mb-3.5">
-				<form data-static-form-name="contact" class="items-center auto-cols-fr grid-cols-1 sm:grid-cols-2 grid-rows-[auto] grid gap-8">
+				<form data-static-form-name="contact" class="items-center auto-cols-fr grid-cols-1 sm:grid-cols-2 grid-rows-[auto] grid gap-8" action="https://submit-form.com/DO56cKKU1" data-botpoison-public-key="pk_23c283b4-3034-48f0-bc86-1206b236df71">
 					{
 						fields?.map((field) => {
 							if (field.type === "submit") {
@@ -91,7 +92,7 @@ const { title, fields } = Astro.props;
 							}
 						})
 					}
-				</fo>
+				</form>
 			</div>
 		</div>
 	</div>

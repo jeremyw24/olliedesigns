@@ -3,76 +3,25 @@ import { getCollection } from "astro:content";
 import Container from "@/components/primitives/Container.astro";
 import Link from "@/components/primitives/Link.astro";
 import { getLocalizedSettings } from "@/lib/localization-helpers";
-import { translatePath, unlocalizedUrl } from "@/lib/localization-helpers";
-import { defaultLocale, locales } from "site";
 
-const currentLocale = Astro.currentLocale;
-
-const { footer, contacts } = getLocalizedSettings(currentLocale);
-
-function getTranslatedUrl(locale: string): string {
-	const unlocalizedPath = unlocalizedUrl(Astro.url.pathname);
-	return translatePath(locale, unlocalizedPath);
-}
-
-function isActiveLocale(locale: string): boolean {
-	return locale === currentLocale;
-}
+const { footer, contacts } = getLocalizedSettings("en");
 
 const pages = await getCollection("pages");
-const services = await getCollection("services");
-const posts = await getCollection("posts");
 
 // get top 6 pages which are informational pages
 const topInfoPages = pages
-	.map((page) => {
-		const [lang, ...slug] = page.slug.split("/");
-		return {
-			...page,
-			lang: lang,
-			slug: page.slug.startsWith("/") ? page.slug : `/${page.slug}`,
-		};
-	})
-	.filter(
-		(page) =>
-			page.lang === currentLocale && page.data.type === "informational",
-	)
-	.slice(0, 6);
-
-const topServices = services
-	.map((page) => {
-		const [lang, ...slug] = page.slug.split("/");
-		return {
-			...page,
-			lang: lang,
-			slug: translatePath(
-				lang,
-				`/service${unlocalizedUrl(`/${page.slug}`)}`,
-			),
-		};
-	})
-	.filter((page) => page.lang === currentLocale)
-	.slice(0, 6);
-
-const lastPosts = posts
-	.map((page) => {
-		const [lang, ...slug] = page.slug.split("/");
-		return {
-			...page,
-			lang: lang,
-			slug: translatePath(
-				lang,
-				`/post${unlocalizedUrl(`/${page.slug}`)}`,
-			),
-		};
-	})
-	.filter((page) => page.lang === currentLocale)
-	.sort(
-		(a, b) =>
-			new Date(b.data.lastUpdateDate).getTime() -
-			new Date(a.data.lastUpdateDate).getTime(),
-	)
-	.slice(0, 5);
+.filter((page) =>
+  page.data.type === "informational" &&
+  page.slug.startsWith("en/")
+)
+.map((page) => {
+  const basePath = page.slug.split("/").pop();
+  return {
+    ...page,
+    slug: `/${basePath}`,
+  };
+})
+.slice(0, 6);
 ---
 
 <div
@@ -103,15 +52,7 @@ const lastPosts = posts
 				class="auto-cols-fr grid-cols-1 lg:grid-cols-[1.8fr_.4fr_1fr] grid-rows-[auto] grid mt-16 gap-10"
 			>
 				<div class="col-span-1 row-span-1">
-					<div
-						class="items-center gap-x-[0.63rem] flex mb-5 text-white font-semibold uppercase"
-					>
-						<div
-							class="items-center py-3 px-5 flex border-2 border-white border-solid rounded-3xl"
-						>
-							<div>Links</div>
-						</div>
-					</div>
+
 					<div class="mt-10">
 						<div
 							class="auto-cols-fr grid-cols-[1fr_1fr_1fr] grid-rows-[auto] grid gap-[1.88rem]"
@@ -123,7 +64,7 @@ const lastPosts = posts
 									<p
 										class="text-white border-b-2 text-lg pb-1 mb-3 border-white border-solid"
 									>
-										Collegamenti utili
+										Navigation
 									</p>
 									<ul
 										class="text-white/[0.65] mb-3 list-none"
@@ -142,60 +83,14 @@ const lastPosts = posts
 									</ul>
 								</div>
 							</div>
-							<div
-								class="items-start flex-col flex gap-[0.63rem]"
-							>
-								<p
-									class="text-white border-b-2 text-lg pb-1 mb-3 border-white border-solid"
-								>
-									Services
-								</p>
-								<ul class="text-white/[0.65] mb-3 list-none">
-									{
-										topServices.map(
-											({ data: { title }, slug }) => (
-												<li>
-													<a href={slug}>{title}</a>
-												</li>
-											),
-										)
-									}
-								</ul>
-							</div>
-							<div
-								class="items-start flex-col flex gap-[0.63rem]"
-							>
-								<p
-									class="text-white border-b-2 text-lg pb-1 mb-3 border-white border-solid"
-								>
-									Latest posts
-								</p>
-								<ul class="text-white/[0.65] mb-3 list-none">
-									{
-										lastPosts.map(
-											({ data: { title }, slug }) => (
-												<li>
-													<a href={slug}>{title}</a>
-												</li>
-											),
-										)
-									}
-								</ul>
-							</div>
+
+
 						</div>
 					</div>
 				</div>
 				<div class="col-span-1 row-span-1"></div>
 				<div class="col-span-1 row-span-1 text-white">
-					<div
-						class="items-center gap-x-[0.63rem] flex mb-5 font-semibold uppercase"
-					>
-						<div
-							class="items-center py-3 px-5 flex border-2 border-white border-solid rounded-3xl"
-						>
-							<div>stay in touch</div>
-						</div>
-					</div>
+
 					<div class="mt-10 text-lg">
 						<div class="items-start flex-col flex">
 							<a
@@ -219,40 +114,7 @@ const lastPosts = posts
 					<p class="text-white/[0.78] text-base">
 						{footer.copyright}
 					</p>
-					<div class="flex gap-4">
-						{
-							locales.map((locale) => (
-								<a
-									href={getTranslatedUrl(locale)}
-									class:list={[
-										"items-center justify-start flex overflow-hidden gap-4 relative cursor-pointer",
-										isActiveLocale(locale)
-											? "bg-white text-black px-2 py-1 rounded-md"
-											: "text-white",
-									]}
-								>
-									<span class="overflow-hidden text-md xs:text-lg md:text-xl">
-										<span>{locale}</span>
-									</span>
-								</a>
-							))
-						}
-					</div>
-					<div class="flex gap-5 text-lg text-blue-700">
-						<a href="/privacy" class="inline-block max-w-full"
-							><p
-								class="text-white border-b-2 cursor-pointer pb-1 border-white border-solid"
-							>
-								Privacy policy
-							</p></a
-						><a href="/terms" class="inline-block max-w-full"
-							><p
-								class="text-white border-b-2 cursor-pointer pb-1 border-white border-solid"
-							>
-								Terms
-							</p></a
-						>
-					</div>
+
 				</div>
 			</div>
 		</div>

@@ -11,18 +11,14 @@
 			"title": "About",
 			"link": "/about"
 		},
-		{
-			"title": "Works",
-			"link": "/works"
-		},
-		{
-			"title": "News",
-			"link": "/news"
-		},
-		{
-			"title": "Contacts",
-			"link": "/contact"
-		}
+{
+"title": "Works",
+"link": "/works"
+},
+{
+"title": "Contacts",
+"link": "/contact"
+}
 	],
 	"actions": []
 }
